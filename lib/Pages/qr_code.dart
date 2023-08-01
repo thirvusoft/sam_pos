@@ -1,8 +1,8 @@
-import 'dart:typed_data';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:sam/Pages/qr_border.dart';
+import 'package:get/get.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
+import '../modules/serialnocontroller.dart';
 
 class Qrcode extends StatefulWidget {
   const Qrcode({super.key});
@@ -12,8 +12,26 @@ class Qrcode extends StatefulWidget {
 }
 
 class _QrcodeState extends State<Qrcode> {
+  final Serialno serialno_ = Get.put(Serialno());
+
+  Barcode? result;
+
   bool iiscanned = false;
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  QRViewController? controller;
+  String username = '';
+  var itemlist_;
+
   @override
+  void reassemble() {
+    super.reassemble();
+    if (Platform.isAndroid) {
+      controller!.pauseCamera();
+    } else if (Platform.isIOS) {
+      controller!.resumeCamera();
+    }
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -32,24 +50,19 @@ class _QrcodeState extends State<Qrcode> {
                 flex: 4,
                 child: Stack(
                   children: [
-                    SizedBox(
-                      child: MobileScanner(
-                        onDetect: (capture) {
-                          if (!iiscanned) {
-                            String code = "";
-                            final List<Barcode> barcodes = capture.barcodes;
-                            final Uint8List? image = capture.image;
-                            // String code = barcode.rawValue;
-                            for (final barcode in barcodes) {
-                              code = barcode.rawValue!;
-                              debugPrint('Barcode found! ${barcode.rawValue}');
-                            }
-                          }
-                        },
+                    QRView(
+                      key: qrKey,
+                      onQRViewCreated: _onQRViewCreated,
+                      overlay: QrScannerOverlayShape(
+                        borderColor: Colors.white,
+                        borderRadius: 10,
+                        borderLength: 30,
+                        borderWidth: 10,
+                        cutOutSize: 250,
                       ),
                     ),
-                    QRScannerOverlay(
-                        overlayColour: Colors.black.withOpacity(0.5)),
+                    // QRScannerOverlay(
+                    //     overlayColour: Colors.black.withOpacity(0.5)),
                   ],
                 )),
             Expanded(
@@ -60,5 +73,25 @@ class _QrcodeState extends State<Qrcode> {
         ),
       ),
     );
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      setState(() {
+        result = scanData;
+        if (result!.code!.isNotEmpty) {
+          setState(() {
+            itemlist_ = result!.code.toString();
+          });
+          controller.pauseCamera();
+          print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+          print(itemlist_);
+          Get.toNamed('/homepage');
+          serialno_.add(itemlist_);
+          // itemlist.add(itemlist_);
+        }
+      });
+    });
   }
 }

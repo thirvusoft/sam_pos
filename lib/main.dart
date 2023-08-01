@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: myCustomSwatch,
       ),
-      initialRoute: Routes.homepage,
+      initialRoute: Routes.loginpage,
       getPages: getPages,
     );
   }

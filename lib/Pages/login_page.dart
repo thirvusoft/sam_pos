@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../modules/serialnocontroller.dart';
+import '../modules/serviceapi.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_input_field.dart';
 import '../widgets/header.dart';
@@ -16,10 +21,14 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   //
   final _loginFormKey = GlobalKey<FormState>();
+  final Serialno serialno_ = Get.put(Serialno());
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    TextEditingController passwordController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color(0xffEEF1F3),
@@ -46,6 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                           title: 'Log-in',
                         ),
                         CustomInputField(
+                            controller: emailController,
                             labelText: 'Email',
                             hintText: 'Your email id',
                             validator: (textValue) {
@@ -61,6 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                           height: 16,
                         ),
                         CustomInputField(
+                          controller: passwordController,
                           labelText: 'Password',
                           hintText: 'Your password',
                           obscureText: true,
@@ -94,9 +105,11 @@ class _LoginPageState extends State<LoginPage> {
                           height: 20,
                         ),
                         CustomFormButton(
-                          innerText: 'Login',
-                          onPressed: _handleLoginUser,
-                        ),
+                            innerText: 'Login',
+                            onPressed: () {
+                              _handleLoginUser(emailController.text,
+                                  passwordController.text);
+                            }),
                         const SizedBox(
                           height: 18,
                         ),
@@ -140,9 +153,46 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _handleLoginUser() {
-    if (_loginFormKey.currentState!.validate()) {
-      showCustomSnackBar("Successfully login", title: "Success");
-    }
+  Future _handleLoginUser(email, pwd) async {
+    // if (_loginFormKey.currentState!.validate()) {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    frappe.call(
+        // context: context,
+        method: "login",
+        args: {"usr": "vignesh@thirvusoft.in", "pwd": "admin@123"},
+        callback: (response, result) async {
+          if (response!.statusCode == 200) {
+            print(response.statusCode);
+            response.headers['cookie'] =
+                "${response.headers['set-cookie'].toString()};";
+            response.headers.removeWhere(
+                (key, value) => ["set-cookie", 'content-length'].contains(key));
+            apiHeaders = response.headers;
+            await prefs.setString('request-header',
+                json.encode(response.headers)); // store headers for API calls
+
+            frappe.call(
+                // context: context,
+                method: "login",
+                args: {"usr": "vignesh@thirvusoft.in", "pwd": "admin@123"},
+                callback: (response, result) async {
+                  if (response!.statusCode == 200) {
+                    print(response.statusCode);
+                    response.headers['cookie'] =
+                        "${response.headers['set-cookie'].toString()};";
+                    response.headers.removeWhere((key, value) =>
+                        ["set-cookie", 'content-length'].contains(key));
+                    apiHeaders = response.headers;
+                    await prefs.setString(
+                        'request-header',
+                        json.encode(
+                            response.headers)); // store headers for API calls
+                  }
+                });
+          }
+        });
+    // await serialno_.salesInvoice(email, pwd);
+    showCustomSnackBar("Successfully login", title: "Success");
   }
 }
+// }

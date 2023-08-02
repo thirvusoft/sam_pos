@@ -14,7 +14,6 @@ class Serialno extends GetxController {
 
   add(itemlist_) {
     List<String> items = itemlist_.split(',');
-    Set<String> serialNumbers = {};
     for (String item in items) {
       if (item.contains('Serial Number')) {
         String serialNumber = item.split(':').last.trim();
@@ -22,9 +21,6 @@ class Serialno extends GetxController {
 
         print(itemList);
         if (itemList.isNotEmpty) {
-          // for (int i = 0; i < itemList.length; i++) {
-          // print("${serialNumber}Serial number");
-          // print("${itemList[i]['item_code']}item code");
           print(check_item);
           if (!check_item.contains(serialNumber)) {
             itemList.add(<dynamic, dynamic>{"item_code": serialNumber});
@@ -33,7 +29,7 @@ class Serialno extends GetxController {
             print(itemList);
           } else {
             showCustomSnackBar("$serialNumber already exists",
-                title: "Success");
+                title: "Success", icon: false);
           }
         } else {
           print("3");
@@ -43,6 +39,10 @@ class Serialno extends GetxController {
         break;
       }
     }
+  }
+
+  itemDeletion(index) {
+    itemList.removeWhere((item) => item['item_code'] == index);
   }
 
   Future salesInvoice(email, pwd) async {
@@ -62,6 +62,8 @@ class Serialno extends GetxController {
       apiHeaders = response.headers;
       await prefs.setString('request-header',
           json.encode(response.headers)); // store headers for API calls
+
+      print(prefs.getString('request-header') ?? '');
     } catch (e) {
       print('Error fetching events: $e');
     }

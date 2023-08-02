@@ -16,9 +16,7 @@ bool isDefinedAndNotNull(dynamic value) {
 
 class frappe {
   static Future<void> call(
-      {
-      // required BuildContext context,
-      required String method,
+      {required String method,
       Map<dynamic, dynamic> args = const {},
       void Function(http.StreamedResponse?, Map<dynamic, dynamic>?)?
           callback}) async {
@@ -70,6 +68,8 @@ class frappe {
       } finally {}
     }
     if (isDefinedAndNotNull(args?['message'])) {
+      print("pppppp");
+      print((args?['message'] ?? '').toString());
       // Fluttertoast.showToast(
       //     msg: (args?['message'] ?? '').toString(),
       //     toastLength: Toast.LENGTH_SHORT,

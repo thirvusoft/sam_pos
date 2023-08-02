@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../modules/serialnocontroller.dart';
+import '../modules/serviceapi.dart';
 import '../widgets/appbar.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_input_field.dart';
+import '../widgets/snackbar.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -22,6 +27,7 @@ class _HomepageState extends State<Homepage> {
     TextEditingController serialController = TextEditingController();
     final Serialno serialno_ = Get.put(Serialno());
     return Scaffold(
+        // backgroundColor: Color.black,
         appBar: const ReusableAppBar(
           title: 'Add Sales',
         ),
@@ -43,6 +49,13 @@ class _HomepageState extends State<Homepage> {
                         return 'Please enter pincode';
                       }
                       return null;
+                    },
+                    onChanged: (Value) {
+                      print(dateController.text);
+                      if (dateController.text.length == 10) {
+
+                        
+                      }
                     },
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
@@ -90,21 +103,13 @@ class _HomepageState extends State<Homepage> {
                         width: 5,
                       ),
                       Expanded(
-                        child: Container(
-                          height: MediaQuery.of(context).size.height / 11.5,
-                          padding: const EdgeInsets.all(16.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: const Color(0xff939393)),
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                          ),
-                          child: IconButton(
-                            onPressed: () {
-                              Get.toNamed('/qrcode');
-                            },
-                            icon: const HeroIcon(
-                              HeroIcons.qrCode,
-                              size: 25,
-                            ),
+                        child: IconButton(
+                          onPressed: () {
+                            Get.toNamed('/qrcode');
+                          },
+                          icon: const HeroIcon(
+                            HeroIcons.qrCode,
+                            size: 25,
                           ),
                         ),
                       )
@@ -130,9 +135,13 @@ class _HomepageState extends State<Homepage> {
                               return Card(
                                 elevation: 6,
                                 child: ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0, vertical: 8.0),
                                   leading: CircleAvatar(
-                                    radius: 16,
-                                    child: Text(count.toString()),
+                                    radius: 15.0,
+                                    backgroundColor: const Color(0xfffdebe8),
+                                    child: Text(count.toString(),
+                                        style: ThemeText.text),
                                   ),
                                   title: Text((serialno_.itemList[index]
                                               ["item_code"] ??
@@ -142,8 +151,9 @@ class _HomepageState extends State<Homepage> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       SizedBox(
-                                        width: 35,
+                                        width: 45,
                                         child: TextField(
+                                          textAlign: TextAlign.start,
                                           controller: serialno_.itemList[index]
                                               ['rate_controller'],
                                           onChanged: (newValue) {
@@ -160,9 +170,13 @@ class _HomepageState extends State<Homepage> {
                                         ),
                                       ),
                                       IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          serialno_.itemDeletion(serialno_
+                                              .itemList[index]["item_code"]);
+                                        },
                                         icon: const HeroIcon(
                                           HeroIcons.trash,
+                                          color: Colors.black,
                                           size: 25,
                                         ),
                                       ),
@@ -174,15 +188,11 @@ class _HomepageState extends State<Homepage> {
                           ),
                         ),
                       )),
-                  // CustomFormButton(
-                  //   innerText: 'Login',
-                  //   onPressed:()=> ,
-                  // ),
-                  //        Elevatebutton(
-                  //   formKey: formKey,
-                  //   name: 'Submit',
-                  //   onPressed: () => filepi.uploadFiles(doc, "Event"),
-                  // )
+                  CustomFormButton(
+                      innerText: 'Login',
+                      onPressed: () {
+                        salesInvoice();
+                      }),
                 ],
               ),
             ),
@@ -190,5 +200,49 @@ class _HomepageState extends State<Homepage> {
         ));
   }
 
-  void _handleLoginUser() {}
+  Future<void> salesInvoice() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    frappe.call(
+        method: "login",
+        // args: {"usr": email, "pwd": pwd},
+        callback: (response, result) async {
+          if (response!.statusCode == 200) {
+            print(response.statusCode);
+            response.headers['cookie'] =
+                "${response.headers['set-cookie'].toString()};";
+            response.headers.removeWhere(
+                (key, value) => ["set-cookie", 'content-length'].contains(key));
+            apiHeaders = response.headers;
+            await prefs.setString('request-header',
+                json.encode(response.headers)); // store headers for API calls
+
+            frappe.call(
+                // context: context,
+                method: "login",
+                args: {"usr": "vignesh@thirvusoft.in", "pwd": "admin@123"},
+                callback: (response, result) async {
+                  if (response!.statusCode == 200) {
+                    print(response.statusCode);
+                    response.headers['cookie'] =
+                        "${response.headers['set-cookie'].toString()};";
+                    response.headers.removeWhere((key, value) =>
+                        ["set-cookie", 'content-length'].contains(key));
+                    apiHeaders = response.headers;
+                    await prefs.setString(
+                        'request-header',
+                        json.encode(
+                            response.headers)); // store headers for API calls
+                    Get.toNamed("/homepage");
+                    showCustomSnackBar(
+                      "Successfully login",
+                      title: "Success",
+                      icon: true,
+                      iconColor: Colors.green,
+                      backgroundColor: Colors.green.shade700,
+                    );
+                  }
+                });
+          }
+        });
+  }
 }

@@ -53,8 +53,7 @@ class _HomepageState extends State<Homepage> {
                     onChanged: (Value) {
                       print(dateController.text);
                       if (dateController.text.length == 10) {
-
-                        
+                        serialno_.customer_(dateController.text);
                       }
                     },
                     decoration: const InputDecoration(
@@ -64,6 +63,27 @@ class _HomepageState extends State<Homepage> {
                       labelText: "Customer *",
                     ),
                   ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Obx(() => SizedBox(
+                        height: serialno_.customer.length * 60,
+                        child: ListView.builder(
+                          itemCount: serialno_.customer.length,
+                          itemBuilder: (BuildContext context, index) {
+                            return Card(
+                                child: ListTile(
+                              leading: const HeroIcon(
+                                HeroIcons.user,
+                                size: 25,
+                              ),
+                              title: Text(serialno_.customer[index]
+                                      ["customer_name"]
+                                  .toString()),
+                            ));
+                          },
+                        ),
+                      )),
                   const SizedBox(
                     height: 25,
                   ),

@@ -157,7 +157,22 @@ class _LoginPageState extends State<LoginPage> {
   Future _handleLoginUser(email, pwd) async {
     if (_loginFormKey.currentState!.validate()) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      // frappe.call(
+      //     method: "login",
+      //     args: {"usr": email, "pwd": pwd},
+      //     callback: (response, result) async {
+      //       if (response!.statusCode == 200) {
+      //         print(response.statusCode);
+      //         response.headers['cookie'] =
+      //             "${response.headers['set-cookie'].toString()};";
+      //         response.headers.removeWhere((key, value) =>
+      //             ["set-cookie", 'content-length'].contains(key));
+      //         apiHeaders = response.headers;
+      //         await prefs.setString('request-header',
+      //             json.encode(response.headers)); // store headers for API calls
+
       frappe.call(
+          // context: context,
           method: "login",
           args: {"usr": email, "pwd": pwd},
           callback: (response, result) async {
@@ -170,36 +185,17 @@ class _LoginPageState extends State<LoginPage> {
               apiHeaders = response.headers;
               await prefs.setString('request-header',
                   json.encode(response.headers)); // store headers for API calls
-
-              frappe.call(
-                  // context: context,
-                  method: "login",
-                  args: {"usr": "vignesh@thirvusoft.in", "pwd": "admin@123"},
-                  callback: (response, result) async {
-                    if (response!.statusCode == 200) {
-                      print(response.statusCode);
-                      response.headers['cookie'] =
-                          "${response.headers['set-cookie'].toString()};";
-                      response.headers.removeWhere((key, value) =>
-                          ["set-cookie", 'content-length'].contains(key));
-                      apiHeaders = response.headers;
-                      await prefs.setString(
-                          'request-header',
-                          json.encode(
-                              response.headers)); // store headers for API calls
-                      Get.toNamed("/homepage");
-                      showCustomSnackBar(
-                        "Successfully login",
-                        title: "Success",
-                        icon: true,
-                        iconColor: Colors.green,
-                        backgroundColor: Colors.green.shade700,
-                      );
-                    }
-                  });
+              Get.toNamed("/homepage");
+              showCustomSnackBar(
+                "Successfully login",
+                title: "Success",
+                icon: true,
+                iconColor: Colors.green,
+                backgroundColor: Colors.green.shade700,
+              );
             }
           });
-      // await serialno_.salesInvoice(email, pwd);
     }
   }
+  // await serialno_.salesInvoice(email, pwd);
 }

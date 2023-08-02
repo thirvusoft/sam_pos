@@ -50,9 +50,9 @@ class frappe {
     print(res);
 
     callback?.call(response, res);
-    if (isDefinedAndNotNull(res?['show_alert'])) {
-      showAlert(res?['show_alert']);
-    }
+    // if (isDefinedAndNotNull(res?['show_alert'])) {
+    //   showAlert(res?['show_alert']);
+    // }
     // if (pushSessionExpiryScreen &&
     //     (res?['session_expired'] == 1 ||
     //         !response.headers.toString().contains("system_user=yes"))) {

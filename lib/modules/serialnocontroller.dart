@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:sam/modules/serviceapi.dart';
@@ -8,6 +9,7 @@ import '../widgets/snackbar.dart';
 
 class Serialno extends GetxController {
   List itemList = [].obs;
+  List customer = [].obs;
   List resultList = [];
   bool isDuplicate = false;
   List check_item = [];
@@ -55,6 +57,7 @@ class Serialno extends GetxController {
       );
       print(response.statusCode);
       print(response.body);
+
       response.headers['cookie'] =
           "${response.headers['set-cookie'].toString()};";
       response.headers.removeWhere(
@@ -67,5 +70,32 @@ class Serialno extends GetxController {
     } catch (e) {
       print('Error fetching events: $e');
     }
+  }
+
+  Future customer_(number) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    frappe.call(
+        // context: context,
+        method:
+            "azhagu_murugan_live.azhagu_murugan_live.utils.api.api.customer_list",
+        args: {
+          "mobile": number,
+        },
+        callback: (response, result) async {
+          if (response!.statusCode == 200) {
+            customer.clear();
+            print(response.statusCode);
+
+            print(result?["message"]);
+            customer += result?["message"] ?? [];
+            response.headers['cookie'] =
+                "${response.headers['set-cookie'].toString()};";
+            response.headers.removeWhere(
+                (key, value) => ["set-cookie", 'content-length'].contains(key));
+            apiHeaders = response.headers;
+            await prefs.setString('request-header',
+                json.encode(response.headers)); // store headers for API calls
+          }
+        });
   }
 }

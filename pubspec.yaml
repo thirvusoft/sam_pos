@@ -44,6 +44,9 @@ dependencies:
   shared_preferences: ^2.2.0
   socket_io_client: ^2.0.3+1
   flutter_dotenv: ^5.1.0
+  intl: ^0.18.1
+  flutter_phosphor_icons: ^0.0.1+6
+  google_fonts: ^5.1.0
 
 dev_dependencies:
   flutter_test:

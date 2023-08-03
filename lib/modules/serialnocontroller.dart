@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:sam/modules/serviceapi.dart';
+import 'package:sam/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../Pages/home_page.dart';
+import '../Pages/login_page.dart';
 import '../widgets/snackbar.dart';
 
 class Serialno extends GetxController {
@@ -31,7 +34,7 @@ class Serialno extends GetxController {
             print(itemList);
           } else {
             showCustomSnackBar("$serialNumber already exists",
-                title: "Success", icon: false);
+                title: "Failure", icon: false);
           }
         } else {
           print("3");
@@ -45,6 +48,7 @@ class Serialno extends GetxController {
 
   itemDeletion(index) {
     itemList.removeWhere((item) => item['item_code'] == index);
+    print(itemList);
   }
 
   Future salesInvoice(email, pwd) async {
@@ -95,6 +99,19 @@ class Serialno extends GetxController {
             apiHeaders = response.headers;
             await prefs.setString('request-header',
                 json.encode(response.headers)); // store headers for API calls
+          }
+        });
+  }
+
+  Future splash() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await frappe.call(
+        // context: context,
+        method: "frappe.auth.get_logged_user",
+        callback: (response, result) async {
+          if (response!.statusCode == 200) {
+            print("11");
+            Get.to(Homepage());
           }
         });
   }

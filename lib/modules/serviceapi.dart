@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -6,7 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-Map<String, String> apiHeaders = {'Content-Type': 'application/json'};
+import '../routes/routes.dart';
 
 class Undefined {}
 
@@ -28,10 +29,14 @@ class frappe {
             .forEach((k, v) => {apiHeaders[k.toString()] = v.toString()});
       }
     }
+    if (apiHeaders.isEmpty) {
+      apiHeaders = {'Content-Type': 'application/json'};
+    }
     String url = "https://sam2.thirvusoft.co.in";
     var request = http.Request(
       'GET',
-      Uri.parse("""https://sam2.thirvusoft.co.in/api/method/$method"""),
+      Uri.parse(
+          """https://prefer-voice-eagles-proteins.trycloudflare.com/api/method/$method"""),
     );
     print(args);
     print(request.body);
@@ -53,12 +58,10 @@ class frappe {
     // if (isDefinedAndNotNull(res?['show_alert'])) {
     //   showAlert(res?['show_alert']);
     // }
-    // if (pushSessionExpiryScreen &&
-    //     (res?['session_expired'] == 1 ||
-    //         !response.headers.toString().contains("system_user=yes"))) {
-
-    //   return;
-    // }
+    if ((res?['session_expired'] == 1 ||
+        !response.headers.toString().contains("system_user=yes"))) {
+      Get.toNamed("/loginpage");
+    }
   }
 
   static void showAlert(args) {

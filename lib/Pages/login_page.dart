@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../modules/serialnocontroller.dart';
 import '../modules/serviceapi.dart';
+import '../routes/routes.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_input_field.dart';
 import '../widgets/header.dart';
@@ -21,14 +22,14 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   //
-  final _loginFormKey = GlobalKey<FormState>();
   final Serialno serialno_ = Get.put(Serialno());
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  final _loginFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    TextEditingController passwordController = TextEditingController();
-    TextEditingController emailController = TextEditingController();
 
     return SafeArea(
       child: Scaffold(
@@ -157,27 +158,17 @@ class _LoginPageState extends State<LoginPage> {
   Future _handleLoginUser(email, pwd) async {
     if (_loginFormKey.currentState!.validate()) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      // frappe.call(
-      //     method: "login",
-      //     args: {"usr": email, "pwd": pwd},
-      //     callback: (response, result) async {
-      //       if (response!.statusCode == 200) {
-      //         print(response.statusCode);
-      //         response.headers['cookie'] =
-      //             "${response.headers['set-cookie'].toString()};";
-      //         response.headers.removeWhere((key, value) =>
-      //             ["set-cookie", 'content-length'].contains(key));
-      //         apiHeaders = response.headers;
-      //         await prefs.setString('request-header',
-      //             json.encode(response.headers)); // store headers for API calls
-
       frappe.call(
           // context: context,
           method: "login",
           args: {"usr": email, "pwd": pwd},
           callback: (response, result) async {
+            print("[[][[[]]]]");
+            var full_name = result?['full_name'];
+            print(full_name);
             if (response!.statusCode == 200) {
               print(response.statusCode);
+
               response.headers['cookie'] =
                   "${response.headers['set-cookie'].toString()};";
               response.headers.removeWhere((key, value) =>
@@ -185,6 +176,7 @@ class _LoginPageState extends State<LoginPage> {
               apiHeaders = response.headers;
               await prefs.setString('request-header',
                   json.encode(response.headers)); // store headers for API calls
+              await prefs.setString('full_name', result?['full_name']);
               Get.toNamed("/homepage");
               showCustomSnackBar(
                 "Successfully login",

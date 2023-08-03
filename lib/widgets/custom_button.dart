@@ -11,16 +11,17 @@ class CustomFormButton extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      width: size.width * 0.8,
+      width: size.width * 0.9,
+      height: size.height / 14,
       decoration: BoxDecoration(
-        color: const Color(0xff233743),
+        color: const Color.fromARGB(255, 18, 19, 19),
         borderRadius: BorderRadius.circular(26),
       ),
       child: TextButton(
         onPressed: onPressed,
         child: Text(
           innerText,
-          style: const TextStyle(color: Colors.white, fontSize: 20),
+          style: const TextStyle(color: Colors.white, fontSize: 18),
         ),
       ),
     );

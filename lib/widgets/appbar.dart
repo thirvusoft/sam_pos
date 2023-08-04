@@ -9,6 +9,8 @@ class ReusableAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false,
+
       title: Text(title),
       centerTitle: true,
       // actions: actions,
@@ -18,3 +20,5 @@ class ReusableAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
+
+

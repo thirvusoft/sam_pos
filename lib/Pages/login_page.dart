@@ -177,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
               await prefs.setString('request-header',
                   json.encode(response.headers)); // store headers for API calls
               await prefs.setString('full_name', result?['full_name']);
-              Get.toNamed("/homepage");
+              Get.offAllNamed("/homepage");
               showCustomSnackBar(
                 "Successfully login",
                 title: "Success",
@@ -188,6 +188,4 @@ class _LoginPageState extends State<LoginPage> {
             }
           });
     }
-  }
-  // await serialno_.salesInvoice(email, pwd);
-}
+  }}

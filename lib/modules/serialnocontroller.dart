@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -8,14 +9,16 @@ import 'package:sam/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Pages/home_page.dart';
 import '../Pages/login_page.dart';
+import '../widgets/appbar.dart';
 import '../widgets/snackbar.dart';
 
 class Serialno extends GetxController {
-  List itemList = [].obs;
+  List itemList = <dynamic>[].obs;
   List customer = [].obs;
   List resultList = [];
   bool isDuplicate = false;
   List check_item = [];
+  late Timer timer;
 
   add(itemlist_) {
     List<String> items = itemlist_.split(',');
@@ -49,6 +52,12 @@ class Serialno extends GetxController {
   itemDeletion(index) {
     itemList.removeWhere((item) => item['item_code'] == index);
     print(itemList);
+  }
+
+  empty() {
+    print("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+    itemList.clear();
+    customer.clear();
   }
 
   Future salesInvoice(email, pwd) async {
@@ -104,14 +113,12 @@ class Serialno extends GetxController {
   }
 
   Future splash() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     await frappe.call(
-        // context: context,
         method: "frappe.auth.get_logged_user",
         callback: (response, result) async {
           if (response!.statusCode == 200) {
-            print("11");
-            Get.to(Homepage());
+            timer = Timer(
+                const Duration(seconds: 3), () => Get.offAllNamed('/homepage'));
           }
         });
   }

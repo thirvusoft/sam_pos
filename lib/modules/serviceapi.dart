@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import '../routes/routes.dart';
+import '../widgets/snackbar.dart';
 
 class Undefined {}
 
@@ -32,11 +33,10 @@ class frappe {
     if (apiHeaders.isEmpty) {
       apiHeaders = {'Content-Type': 'application/json'};
     }
-    String url = "https://sam2.thirvusoft.co.in";
+
     var request = http.Request(
       'GET',
-      Uri.parse(
-          """https://prefer-voice-eagles-proteins.trycloudflare.com/api/method/$method"""),
+      Uri.parse("""${dotenv.env['API_URL']}/api/method/$method"""),
     );
     print(args);
     print(request.body);
@@ -55,37 +55,16 @@ class frappe {
     print(res);
 
     callback?.call(response, res);
-    // if (isDefinedAndNotNull(res?['show_alert'])) {
-    //   showAlert(res?['show_alert']);
-    // }
     if ((res?['session_expired'] == 1 ||
         !response.headers.toString().contains("system_user=yes"))) {
       Get.toNamed("/loginpage");
-    }
-  }
-
-  static void showAlert(args) {
-    if (args is String) {
-      try {
-        args = json.decode(args);
-      } finally {}
-    }
-    if (isDefinedAndNotNull(args?['message'])) {
-      print("pppppp");
-      print((args?['message'] ?? '').toString());
-      // Fluttertoast.showToast(
-      //     msg: (args?['message'] ?? '').toString(),
-      //     toastLength: Toast.LENGTH_SHORT,
-      //     gravity: ToastGravity.BOTTOM,
-      //     timeInSecForIosWeb: 1,
-      //     backgroundColor: (const {
-      //           'red': Color.fromARGB(255, 185, 62, 62),
-      //           'green': Color.fromARGB(255, 69, 124, 63),
-      //           'blue': Color.fromARGB(255, 110, 114, 146)
-      //         }[args?['indicator']] ??
-      //         const Color.fromARGB(255, 196, 233, 255)),
-      //     textColor: Colors.black,
-      //     fontSize: 16.0);
+      showCustomSnackBar(
+        "Session expired",
+        title: "Failure",
+        icon: false,
+        iconColor: Colors.white,
+        backgroundColor: Colors.red.shade700,
+      );
     }
   }
 }

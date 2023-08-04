@@ -51,15 +51,14 @@ class _HomepageState extends State<Homepage> {
                   ),
                   TextFormField(
                     keyboardType: TextInputType.phone,
-                    // autovalidateMode: AutovalidateMode.onUserInteraction,
-
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     controller: dateController,
-                    // validator: (value) {
-                    //   if (value == null || value.isEmpty) {
-                    //     return 'Please enter pincode';
-                    //   }
-                    //   return null;
-                    // },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter Mobile Number';
+                      }
+                      return null;
+                    },
                     onChanged: (Value) {
                       print(dateController.text);
                       if (dateController.text.length == 10) {
@@ -69,7 +68,7 @@ class _HomepageState extends State<Homepage> {
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       counterText: '',
-                      suffixIcon: HeroIcon(HeroIcons.calendar),
+                      suffixIcon: HeroIcon(HeroIcons.phone),
                       labelText: "Mobile Number",
                     ),
                   ),
@@ -105,15 +104,14 @@ class _HomepageState extends State<Homepage> {
                   TextFormField(
                     readOnly: true,
                     keyboardType: TextInputType.phone,
-                    //                    // autovalidateMode: AutovalidateMode.onUserInteraction,
-
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     controller: customercodeController,
-                    // validator: (value) {
-                    //   if (value == null || value.isEmpty) {
-                    //     return 'Please enter pincode';
-                    //   }
-                    //   return null;
-                    // },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter Customer Code';
+                      }
+                      return null;
+                    },
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       counterText: '',
@@ -176,7 +174,7 @@ class _HomepageState extends State<Homepage> {
                     height: 15,
                   ),
                   Obx(() => SizedBox(
-                        height: MediaQuery.of(context).size.height / 1.5,
+                        height: serialno_.itemList.length * 85,
                         width: MediaQuery.of(context).size.width,
                         child: SingleChildScrollView(
                           child: ListView.builder(
@@ -211,6 +209,8 @@ class _HomepageState extends State<Homepage> {
                                       SizedBox(
                                         width: 45,
                                         child: TextField(
+                                          keyboardType: const TextInputType
+                                              .numberWithOptions(decimal: true),
                                           textAlign: TextAlign.start,
                                           controller: serialno_.itemList[index]
                                               ['rate_controller'],
@@ -263,7 +263,7 @@ class _HomepageState extends State<Homepage> {
         ));
   }
 
-  Future<void> salesInvoice(customerid, formattedDate, serialno_) async {
+  salesInvoice(customerid, formattedDate, serialno_) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     for (var item in serialno_) {
       item.remove(
@@ -285,6 +285,7 @@ class _HomepageState extends State<Homepage> {
         },
         callback: (response, result) async {
           if (response!.statusCode == 200) {
+            temp();
             print(response.statusCode);
             response.headers['cookie'] =
                 "${response.headers['set-cookie'].toString()};";
@@ -293,15 +294,30 @@ class _HomepageState extends State<Homepage> {
             apiHeaders = response.headers;
             await prefs.setString('request-header',
                 json.encode(response.headers)); // store headers for API calls
-            Get.toNamed("/homepage");
+            dateController.clear();
+            serialController.clear();
+            customercodeController.clear();
             showCustomSnackBar(
-              "Successfully login",
+              result?['message'],
               title: "Success",
               icon: true,
-              iconColor: Colors.green,
+              iconColor: Colors.white,
               backgroundColor: Colors.green.shade700,
+            );
+          } else {
+            showCustomSnackBar(
+              result?['message'],
+              title: "Failure",
+              icon: false,
+              iconColor: Colors.white,
+              backgroundColor: Colors.red.shade700,
             );
           }
         });
+  }
+
+  temp() {
+    print("ttemepejejjejj");
+    serialno_.empty();
   }
 }

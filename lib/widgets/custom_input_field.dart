@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:heroicons/heroicons.dart';
 
 class CustomInputField extends StatefulWidget {
@@ -83,12 +84,13 @@ abstract class ThemeText {
     fontSize: 15,
   );
 
-  static const TextStyle icon = TextStyle(
-      fontFamily: 'Montserrat',
+  static TextStyle icon = GoogleFonts.lato(
+    textStyle: const TextStyle(
       color: Colors.white,
-      fontSize: 10,
-      height: 0.5,
-      fontWeight: FontWeight.w400);
+      fontSize: 25,
+      fontWeight: FontWeight.w400,
+    ),
+  );
 
   static const TextStyle progressFooter = TextStyle(
       fontFamily: 'Montserrat',

@@ -12,9 +12,13 @@ import '../modules/serialnocontroller.dart';
 import '../modules/serviceapi.dart';
 import '../widgets/appbar.dart';
 import '../widgets/custom_button.dart';
+
 import '../widgets/custom_input_field.dart';
 import '../widgets/snackbar.dart';
 import 'package:intl/intl.dart';
+
+import '../widgets/customer_popup.dart';
+
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -34,6 +38,18 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    TextEditingController dateController = TextEditingController();
+    TextEditingController serialController = TextEditingController();
+    final Serialno serialno_ = Get.put(Serialno());
+    void showPopup(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return PopupWidget();
+        },
+      );
+    }
+
     return Scaffold(
         // backgroundColor: Color.black,
         appBar: const ReusableAppBar(
@@ -112,11 +128,19 @@ class _HomepageState extends State<Homepage> {
                       }
                       return null;
                     },
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
                       counterText: '',
-                      suffixIcon: HeroIcon(HeroIcons.calendar),
-                      labelText: "Customer Code",
+
+
+                      suffix: IconButton(
+                        onPressed: () {
+                          showPopup(context);
+                        },
+                        icon: const HeroIcon(HeroIcons.calendar),
+                        color: Colors.black,
+                      ),
+                      labelText: "Customer *",
                     ),
                   ),
                   const SizedBox(
@@ -320,4 +344,5 @@ class _HomepageState extends State<Homepage> {
     print("ttemepejejjejj");
     serialno_.empty();
   }
+
 }

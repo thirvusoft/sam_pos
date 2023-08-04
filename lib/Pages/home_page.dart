@@ -19,7 +19,6 @@ import 'package:intl/intl.dart';
 
 import '../widgets/customer_popup.dart';
 
-
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
 
@@ -130,17 +129,16 @@ class _HomepageState extends State<Homepage> {
                     },
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
-                      counterText: '',
-
-
-                      suffix: IconButton(
+                      suffixIcon: IconButton(
                         onPressed: () {
                           showPopup(context);
                         },
-                        icon: const HeroIcon(HeroIcons.calendar),
-                        color: Colors.black,
+                        icon: const HeroIcon(
+                          HeroIcons.userPlus,
+                          color: Colors.black,
+                        ),
                       ),
-                      labelText: "Customer *",
+                      labelText: "Customer Code",
                     ),
                   ),
                   const SizedBox(
@@ -344,5 +342,4 @@ class _HomepageState extends State<Homepage> {
     print("ttemepejejjejj");
     serialno_.empty();
   }
-
 }

@@ -6,7 +6,7 @@ import 'package:heroicons/heroicons.dart';
 import '../modules/serialnocontroller.dart';
 import '../widgets/appbar.dart';
 import '../widgets/custom_button.dart';
-import '../widgets/custom_input_field.dart';
+import '../widgets/customer_popup.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -21,6 +21,15 @@ class _HomepageState extends State<Homepage> {
     TextEditingController dateController = TextEditingController();
     TextEditingController serialController = TextEditingController();
     final Serialno serialno_ = Get.put(Serialno());
+    void showPopup(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return PopupWidget();
+        },
+      );
+    }
+
     return Scaffold(
         appBar: const ReusableAppBar(
           title: 'Add Sales',
@@ -44,10 +53,16 @@ class _HomepageState extends State<Homepage> {
                       }
                       return null;
                     },
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
                       counterText: '',
-                      suffixIcon: HeroIcon(HeroIcons.calendar),
+                      suffix: IconButton(
+                        onPressed: () {
+                          showPopup(context);
+                        },
+                        icon: const HeroIcon(HeroIcons.calendar),
+                        color: Colors.black,
+                      ),
                       labelText: "Customer *",
                     ),
                   ),
@@ -184,9 +199,6 @@ class _HomepageState extends State<Homepage> {
           ),
         ));
   }
-void _handleLoginUser()
-{
-  
-}
 
+  void _handleLoginUser() {}
 }

@@ -7,14 +7,14 @@ import 'package:http/http.dart' as http;
 import 'package:sam/modules/serviceapi.dart';
 import 'package:sam/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Pages/home_page.dart';
-import '../Pages/login_page.dart';
+
 import '../widgets/appbar.dart';
 import '../widgets/snackbar.dart';
 
 class Serialno extends GetxController {
   List itemList = <dynamic>[].obs;
   List customer = [].obs;
+  List territorylist_ = [].obs;
   List resultList = [];
   bool isDuplicate = false;
   List check_item = [];
@@ -112,6 +112,46 @@ class Serialno extends GetxController {
         });
   }
 
+  Future territory(name) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    frappe.call(
+        // context: context,
+        method: "frappe.desk.search.search_link",
+        args: {
+          "txt": name,
+          "doctype": "Territory",
+          "ignore_user_permissions": "1",
+          "reference_doctype": "Customer"
+        },
+        callback: (response, result) async {
+          if (response!.statusCode == 200) {
+            customer.clear();
+            print(response.statusCode);
+
+            print(result?["results"]);
+            List<String> valuesList = [];
+
+            for (var item in result?["results"]) {
+              if (item.containsKey('value')) {
+                print(item['value']);
+                valuesList.add(item['value']);
+              }
+            }
+            territorylist_ += (valuesList);
+
+            print("[[][][][][][][][][][][][][]]");
+            print(territorylist_);
+            response.headers['cookie'] =
+                "${response.headers['set-cookie'].toString()};";
+            response.headers.removeWhere(
+                (key, value) => ["set-cookie", 'content-length'].contains(key));
+            apiHeaders = response.headers;
+            await prefs.setString('request-header',
+                json.encode(response.headers)); // store headers for API calls
+          }
+        });
+  }
+
   Future splash() async {
     await frappe.call(
         method: "frappe.auth.get_logged_user",
@@ -119,6 +159,62 @@ class Serialno extends GetxController {
           if (response!.statusCode == 200) {
             timer = Timer(
                 const Duration(seconds: 3), () => Get.offAllNamed('/homepage'));
+          }
+        });
+  }
+
+  Future customercreation_(name) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    frappe.call(
+        // context: context,
+        method:
+            "azhagu_murugan_live.azhagu_murugan_live.utils.api.api.customer_creation",
+        args: {'data': json.encode(name)},
+        callback: (response, result) async {
+          if (response!.statusCode == 200) {
+            customernameController.clear();
+            mobileNoController.clear();
+            territoryController.clear();
+            addressline1Controller.clear();
+            addressline2Controller.clear();
+            pincodeController.clear();
+            customernameController.clear();
+            Get.back();
+
+            showCustomSnackBar(
+              result?["message"],
+              title: "Success",
+              icon: true,
+              iconColor: Colors.green,
+              backgroundColor: Colors.green.shade700,
+            );
+            response.headers['cookie'] =
+                "${response.headers['set-cookie'].toString()};";
+            response.headers.removeWhere(
+                (key, value) => ["set-cookie", 'content-length'].contains(key));
+            apiHeaders = response.headers;
+            await prefs.setString('request-header',
+                json.encode(response.headers)); // store headers for API calls
+          } else {
+            showCustomSnackBar(
+              result?["message"],
+              title: "Failure",
+              icon: false,
+              iconColor: Colors.white,
+              backgroundColor: Colors.red.shade700,
+            );
+          }
+        });
+  }
+
+  Future logout() async {
+    await frappe.call(
+        method: "logout",
+        callback: (response, result) async {
+          if (response!.statusCode == 200) {
+            
+            timer = Timer(const Duration(seconds: 2),
+                () => Get.offAllNamed('/loginpage'));
           }
         });
   }

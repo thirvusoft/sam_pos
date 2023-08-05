@@ -51,7 +51,7 @@ class _HomepageState extends State<Homepage> {
 
     return Scaffold(
         // backgroundColor: Color.black,
-        appBar: const ReusableAppBar(
+        appBar: ReusableAppBar(
           title: 'Add Sales',
         ),
         body: SingleChildScrollView(
@@ -339,7 +339,6 @@ class _HomepageState extends State<Homepage> {
   }
 
   temp() {
-    print("ttemepejejjejj");
     serialno_.empty();
   }
 }

@@ -57,6 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                           title: 'Log-in',
                         ),
                         CustomInputField(
+                            keyboardType: false,
                             controller: emailController,
                             labelText: 'Email',
                             hintText: 'Your email id',
@@ -74,6 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         CustomInputField(
                           controller: passwordController,
+                          keyboardType: false,
                           labelText: 'Password',
                           hintText: 'Your password',
                           obscureText: true,
@@ -188,4 +190,5 @@ class _LoginPageState extends State<LoginPage> {
             }
           });
     }
-  }}
+  }
+}

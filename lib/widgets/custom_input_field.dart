@@ -10,17 +10,19 @@ class CustomInputField extends StatefulWidget {
   final bool? isDense;
   final bool obscureText;
   final TextEditingController? controller;
+  final bool keyboardType; // New parameter for keyboard type
 
-  const CustomInputField(
-      {Key? key,
-      required this.labelText,
-      required this.hintText,
-      required this.validator,
-      this.suffixIcon = false,
-      this.isDense,
-      this.obscureText = false,
-      this.controller})
-      : super(key: key);
+  const CustomInputField({
+    Key? key,
+    required this.labelText,
+    required this.hintText,
+    required this.validator,
+    this.suffixIcon = false,
+    this.isDense,
+    this.obscureText = false,
+    this.controller,
+    required this.keyboardType, // New parameter for keyboard type
+  }) : super(key: key);
 
   @override
   State<CustomInputField> createState() => _CustomInputFieldState();
@@ -41,12 +43,17 @@ class _CustomInputFieldState extends State<CustomInputField> {
             alignment: Alignment.centerLeft,
             child: Text(
               widget.labelText,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: (widget.hintText != "")
+                      ? FontWeight.bold
+                      : FontWeight.w100),
             ),
           ),
           TextFormField(
             controller: widget.controller,
             obscureText: (widget.obscureText && _obscureText),
+            keyboardType: widget.keyboardType ? TextInputType.number : TextInputType.text, // Set the keyboardType based on the parameter
             decoration: InputDecoration(
               isDense: (widget.isDense != null) ? widget.isDense : false,
               hintText: widget.hintText,
@@ -64,7 +71,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
                         });
                       },
                     )
-                  : const HeroIcon(HeroIcons.calendar),
+                  : null,
               suffixIconConstraints: (widget.isDense != null)
                   ? const BoxConstraints(maxHeight: 33)
                   : null,
@@ -77,6 +84,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
     );
   }
 }
+
 
 abstract class ThemeText {
   static const TextStyle text = TextStyle(

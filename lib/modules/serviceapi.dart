@@ -38,21 +38,13 @@ class frappe {
       'GET',
       Uri.parse("""${dotenv.env['API_URL']}/api/method/$method"""),
     );
-    print(args);
-    print(request.body);
+
     request.body = json.encode(args);
-    print("--------------");
-    print(request);
-    print(request.body);
 
     request.headers.addAll(apiHeaders);
-    print('--------------------BEFORE $method---------------------------');
     http.StreamedResponse response = await request.send();
-    print('--------------------REQUEST $method---------------------------');
 
     var res = json.decode(await response.stream.bytesToString());
-    print(response.statusCode);
-    print(res);
 
     callback?.call(response, res);
     if ((res?['session_expired'] == 1 ||

@@ -14,7 +14,7 @@ class CustomFormButton extends StatelessWidget {
       width: size.width * 0.9,
       height: size.height / 14,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 18, 19, 19),
+        color: const Color.fromARGB(255, 245, 94, 60),
         borderRadius: BorderRadius.circular(26),
       ),
       child: TextButton(

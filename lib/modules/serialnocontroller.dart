@@ -25,22 +25,16 @@ class Serialno extends GetxController {
     for (String item in items) {
       if (item.contains('Serial Number')) {
         String serialNumber = item.split(':').last.trim();
-        print(serialNumber);
 
-        print(itemList);
         if (itemList.isNotEmpty) {
-          print(check_item);
           if (!check_item.contains(serialNumber)) {
             itemList.add(<dynamic, dynamic>{"item_code": serialNumber});
-            print("item_list");
             check_item.add(serialNumber);
-            print(itemList);
           } else {
             showCustomSnackBar("$serialNumber already exists",
                 title: "Failure", icon: false);
           }
         } else {
-          print("3");
           check_item.add(serialNumber);
           itemList.add(<dynamic, dynamic>{"item_code": serialNumber});
         }
@@ -51,11 +45,9 @@ class Serialno extends GetxController {
 
   itemDeletion(index) {
     itemList.removeWhere((item) => item['item_code'] == index);
-    print(itemList);
   }
 
   empty() {
-    print("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
     itemList.clear();
     customer.clear();
   }
@@ -68,8 +60,7 @@ class Serialno extends GetxController {
           "https://sam2.thirvusoft.co.in/api/method/login?usr=$email&pwd=$pwd",
         ),
       );
-      print(response.statusCode);
-      print(response.body);
+      
 
       response.headers['cookie'] =
           "${response.headers['set-cookie'].toString()};";
@@ -79,7 +70,7 @@ class Serialno extends GetxController {
       await prefs.setString('request-header',
           json.encode(response.headers)); // store headers for API calls
 
-      print(prefs.getString('request-header') ?? '');
+      
     } catch (e) {
       print('Error fetching events: $e');
     }
@@ -97,9 +88,8 @@ class Serialno extends GetxController {
         callback: (response, result) async {
           if (response!.statusCode == 200) {
             customer.clear();
-            print(response.statusCode);
+          
 
-            print(result?["message"]);
             customer += result?["message"] ?? [];
             response.headers['cookie'] =
                 "${response.headers['set-cookie'].toString()};";
@@ -115,7 +105,6 @@ class Serialno extends GetxController {
   Future territory(name) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     frappe.call(
-        // context: context,
         method: "frappe.desk.search.search_link",
         args: {
           "txt": name,
@@ -126,21 +115,17 @@ class Serialno extends GetxController {
         callback: (response, result) async {
           if (response!.statusCode == 200) {
             customer.clear();
-            print(response.statusCode);
 
-            print(result?["results"]);
             List<String> valuesList = [];
 
             for (var item in result?["results"]) {
               if (item.containsKey('value')) {
-                print(item['value']);
                 valuesList.add(item['value']);
               }
             }
             territorylist_ += (valuesList);
 
-            print("[[][][][][][][][][][][][][]]");
-            print(territorylist_);
+          
             response.headers['cookie'] =
                 "${response.headers['set-cookie'].toString()};";
             response.headers.removeWhere(
@@ -212,7 +197,6 @@ class Serialno extends GetxController {
         method: "logout",
         callback: (response, result) async {
           if (response!.statusCode == 200) {
-            
             timer = Timer(const Duration(seconds: 2),
                 () => Get.offAllNamed('/loginpage'));
           }

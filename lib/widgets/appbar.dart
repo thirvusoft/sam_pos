@@ -16,7 +16,7 @@ class ReusableAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       actions: <Widget>[
         IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.exit_to_app,
             color: Colors.white,
           ),

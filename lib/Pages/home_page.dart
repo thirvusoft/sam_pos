@@ -37,9 +37,9 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-    TextEditingController dateController = TextEditingController();
-    TextEditingController serialController = TextEditingController();
-    final Serialno serialno_ = Get.put(Serialno());
+    // TextEditingController dateController = TextEditingController();
+    // TextEditingController serialController = TextEditingController();
+    // final Serialno serialno_ = Get.put(Serialno());
     void showPopup(BuildContext context) {
       showDialog(
         context: context,
@@ -65,7 +65,7 @@ class _HomepageState extends State<Homepage> {
                     height: 25,
                   ),
                   TextFormField(
-                    keyboardType: TextInputType.phone,
+                    keyboardType: TextInputType.number,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     controller: dateController,
                     validator: (value) {
@@ -75,7 +75,6 @@ class _HomepageState extends State<Homepage> {
                       return null;
                     },
                     onChanged: (Value) {
-                      print(dateController.text);
                       if (dateController.text.length == 10) {
                         serialno_.customer_(dateController.text);
                       }
@@ -83,7 +82,8 @@ class _HomepageState extends State<Homepage> {
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       counterText: '',
-                      suffixIcon: HeroIcon(HeroIcons.phone),
+                      suffixIcon: HeroIcon(HeroIcons.phone,
+                          color: Color.fromARGB(255, 245, 94, 60)),
                       labelText: "Mobile Number",
                     ),
                   ),
@@ -133,10 +133,8 @@ class _HomepageState extends State<Homepage> {
                         onPressed: () {
                           showPopup(context);
                         },
-                        icon: const HeroIcon(
-                          HeroIcons.userPlus,
-                          color: Colors.black,
-                        ),
+                        icon: const HeroIcon(HeroIcons.userPlus,
+                            color: Color.fromARGB(255, 245, 94, 60)),
                       ),
                       labelText: "Customer Code",
                     ),
@@ -187,7 +185,7 @@ class _HomepageState extends State<Homepage> {
                             },
                             icon: const Icon(
                               PhosphorIcons.scan_light,
-                              color: Color(0xffe73b18),
+                              color: Color.fromARGB(255, 245, 94, 60),
                             )),
                       )
                     ],
@@ -209,6 +207,20 @@ class _HomepageState extends State<Homepage> {
                                   .containsKey('rate_controller')) {
                                 serialno_.itemList[index]['rate_controller'] =
                                     TextEditingController();
+                              } else {
+                                serialno_.itemList[index]['rate_controller']
+                                        .value =
+                                    TextEditingValue(
+                                        text: serialno_
+                                            .itemList[index]['rate_controller']
+                                            .text,
+                                        selection: TextSelection.collapsed(
+                                            offset: serialno_
+                                                .itemList[index]
+                                                    ['rate_controller']
+                                                .text
+                                                .toString()
+                                                .length));
                               }
                               return Card(
                                 elevation: 6,
@@ -244,7 +256,6 @@ class _HomepageState extends State<Homepage> {
                                                       .itemList[index]
                                                           ['rate_controller']
                                                       .text;
-                                              print(serialno_.itemList);
                                             });
                                           },
                                         ),
@@ -291,8 +302,7 @@ class _HomepageState extends State<Homepage> {
       item.remove(
           'rate_controller'); // Remove the 'rate_controller' key from the item
     }
-    print(serialno_);
-    print(prefs.getString('full_name'));
+   
     frappe.call(
         // context: context,
         method:
@@ -308,7 +318,6 @@ class _HomepageState extends State<Homepage> {
         callback: (response, result) async {
           if (response!.statusCode == 200) {
             temp();
-            print(response.statusCode);
             response.headers['cookie'] =
                 "${response.headers['set-cookie'].toString()};";
             response.headers.removeWhere(

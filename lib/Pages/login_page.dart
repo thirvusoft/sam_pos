@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(
                 width: double.infinity,
                 height: size.height * 0.3,
-                child: Image.asset('assests/background.jpg')),
+                child: Image.asset('assests/img1.png')),
             Expanded(
               child: Container(
                 decoration: const BoxDecoration(
@@ -57,6 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                           title: 'Log-in',
                         ),
                         CustomInputField(
+                            keyboardType: false,
                             controller: emailController,
                             labelText: 'Email',
                             hintText: 'Your email id',
@@ -74,6 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         CustomInputField(
                           controller: passwordController,
+                          keyboardType: false,
                           labelText: 'Password',
                           hintText: 'Your password',
                           obscureText: true,
@@ -85,24 +87,24 @@ class _LoginPageState extends State<LoginPage> {
                             return null;
                           },
                         ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        Container(
-                          width: size.width * 0.80,
-                          alignment: Alignment.centerRight,
-                          child: GestureDetector(
-                            onTap: () => {},
-                            child: const Text(
-                              'Forget password?',
-                              style: TextStyle(
-                                color: Color(0xff939393),
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
+                        // const SizedBox(
+                        //   height: 16,
+                        // ),
+                        // Container(
+                        //   width: size.width * 0.80,
+                        //   alignment: Alignment.centerRight,
+                        //   child: GestureDetector(
+                        //     onTap: () => {},
+                        //     child: const Text(
+                        //       'Forget password?',
+                        //       style: TextStyle(
+                        //         color: Color(0xff939393),
+                        //         fontSize: 13,
+                        //         fontWeight: FontWeight.bold,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                         const SizedBox(
                           height: 20,
                         ),
@@ -112,34 +114,34 @@ class _LoginPageState extends State<LoginPage> {
                               _handleLoginUser(emailController.text,
                                   passwordController.text);
                             }),
-                        const SizedBox(
-                          height: 18,
-                        ),
-                        SizedBox(
-                          width: size.width * 0.8,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                'Don\'t have an account ? ',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    color: Color(0xff939393),
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              GestureDetector(
-                                onTap: () => {},
-                                child: const Text(
-                                  'Sign-up',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: Color(0xff748288),
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        // const SizedBox(
+                        //   height: 18,
+                        // ),
+                        // SizedBox(
+                        //   width: size.width * 0.8,
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.center,
+                        //     children: [
+                        //       const Text(
+                        //         'Don\'t have an account ? ',
+                        //         style: TextStyle(
+                        //             fontSize: 13,
+                        //             color: Color(0xff939393),
+                        //             fontWeight: FontWeight.bold),
+                        //       ),
+                        //       GestureDetector(
+                        //         onTap: () => {},
+                        //         child: const Text(
+                        //           'Sign-up',
+                        //           style: TextStyle(
+                        //               fontSize: 15,
+                        //               color: Color(0xff748288),
+                        //               fontWeight: FontWeight.bold),
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                         const SizedBox(
                           height: 20,
                         ),
@@ -163,12 +165,7 @@ class _LoginPageState extends State<LoginPage> {
           method: "login",
           args: {"usr": email, "pwd": pwd},
           callback: (response, result) async {
-            print("[[][[[]]]]");
-            var full_name = result?['full_name'];
-            print(full_name);
             if (response!.statusCode == 200) {
-              print(response.statusCode);
-
               response.headers['cookie'] =
                   "${response.headers['set-cookie'].toString()};";
               response.headers.removeWhere((key, value) =>
@@ -188,4 +185,5 @@ class _LoginPageState extends State<LoginPage> {
             }
           });
     }
-  }}
+  }
+}

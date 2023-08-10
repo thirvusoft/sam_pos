@@ -18,14 +18,16 @@ class _SplashscreenState extends State<Splashscreen> {
   @override
   initState() {
     super.initState();
-    print("initState Called");
     serialno_.splash();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 18, 19, 19),
+      // backgroundColor: Color.fromARGB(255, 18, 19, 19),
+      backgroundColor: Color.fromARGB(255, 31, 19, 91),
+      // rgb(31,19,91)
+
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

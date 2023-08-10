@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
   }
 
   static const MaterialColor myCustomSwatch = MaterialColor(
-    0xFF000000,
+    0xFF1f135b,
     <int, Color>{
       50: Color(0xFF000000),
       100: Color(0xFF000000),

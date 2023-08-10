@@ -85,11 +85,8 @@ class _QrcodeState extends State<Qrcode> {
             itemlist_ = result!.code.toString();
           });
           controller.pauseCamera();
-          print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-          print(itemlist_);
           Get.toNamed('/homepage');
           serialno_.add(itemlist_);
-          // itemlist.add(itemlist_);
         }
       });
     });

@@ -53,7 +53,10 @@ class _CustomInputFieldState extends State<CustomInputField> {
           TextFormField(
             controller: widget.controller,
             obscureText: (widget.obscureText && _obscureText),
-            keyboardType: widget.keyboardType ? TextInputType.number : TextInputType.text, // Set the keyboardType based on the parameter
+            keyboardType: widget.keyboardType
+                ? TextInputType.number
+                : TextInputType
+                    .text, // Set the keyboardType based on the parameter
             decoration: InputDecoration(
               isDense: (widget.isDense != null) ? widget.isDense : false,
               hintText: widget.hintText,
@@ -85,7 +88,6 @@ class _CustomInputFieldState extends State<CustomInputField> {
   }
 }
 
-
 abstract class ThemeText {
   static const TextStyle text = TextStyle(
     color: Color(0xffe73b18),
@@ -98,6 +100,10 @@ abstract class ThemeText {
       fontSize: 25,
       fontWeight: FontWeight.w400,
     ),
+  );
+  static TextStyle txt_ = GoogleFonts.lato(
+    textStyle: const TextStyle(letterSpacing: .5),
+    fontSize: 18,
   );
 
   static const TextStyle progressFooter = TextStyle(

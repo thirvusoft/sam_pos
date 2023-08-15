@@ -5,19 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:sam/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../modules/serialnocontroller.dart';
-import '../modules/serviceapi.dart';
+import '../routes/routes.dart';
 import '../widgets/appbar.dart';
 import '../widgets/custom_button.dart';
 
 import '../widgets/custom_input_field.dart';
-import '../widgets/snackbar.dart';
 import 'package:intl/intl.dart';
 
 import '../widgets/customer_popup.dart';
+import 'orderpreview.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -27,19 +26,15 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  TextEditingController dateController = TextEditingController();
-  TextEditingController serialController = TextEditingController();
-  TextEditingController customercodeController = TextEditingController();
   GlobalKey<FormState> formKey_ = GlobalKey<FormState>();
-
+  var customername_ = "";
+  var customernumber_ = "";
   final Serialno serialno_ = Get.put(Serialno());
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-    // TextEditingController dateController = TextEditingController();
-    // TextEditingController serialController = TextEditingController();
-    // final Serialno serialno_ = Get.put(Serialno());
+
     void showPopup(BuildContext context) {
       showDialog(
         context: context,
@@ -50,6 +45,7 @@ class _HomepageState extends State<Homepage> {
     }
 
     return Scaffold(
+        // backgroundColor: Color.black,
         // backgroundColor: Color.black,
         appBar: ReusableAppBar(
           title: 'Add Sales',
@@ -99,6 +95,10 @@ class _HomepageState extends State<Homepage> {
                                 onTap: () {
                                   customercodeController.text =
                                       serialno_.customer[index]["name"];
+                                  customername_ = serialno_.customer[index]
+                                          ["customer_name"]
+                                      .toString();
+                                  print(customername_);
                                 },
                                 child: Card(
                                     child: ListTile(
@@ -161,9 +161,10 @@ class _HomepageState extends State<Homepage> {
                             suffixIcon: IconButton(
                               onPressed: () {
                                 if (serialController.text.isNotEmpty) {
-                                  String code =
-                                      ", Serial Number:${serialController.text.toUpperCase()}";
-                                  serialno_.add(code);
+                                  // String code =
+                                  //     ", Serial Number:${serialController.text.toUpperCase()}";
+                                  serialno_.serialno_(
+                                      serialController.text.toUpperCase());
                                 }
                               },
                               icon: const HeroIcon(
@@ -194,7 +195,7 @@ class _HomepageState extends State<Homepage> {
                     height: 15,
                   ),
                   Obx(() => SizedBox(
-                        height: serialno_.itemList.length * 85,
+                        height: serialno_.itemList.length * 99,
                         width: MediaQuery.of(context).size.width,
                         child: SingleChildScrollView(
                           child: ListView.builder(
@@ -237,6 +238,8 @@ class _HomepageState extends State<Homepage> {
                                               ["item_code"] ??
                                           '')
                                       .toString()),
+                                  subtitle: Text(
+                                      "Item Code : ${serialno_.itemList[index]["item_name"] ?? ''}"),
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -284,8 +287,12 @@ class _HomepageState extends State<Homepage> {
                       onPressed: (serialno_.itemList.isNotEmpty)
                           ? () {
                               if (formKey_.currentState!.validate()) {
-                                salesInvoice(customercodeController.text,
-                                    formattedDate, serialno_.itemList);
+                                salesInvoice(
+                                    customercodeController.text,
+                                    formattedDate,
+                                    serialno_.itemList,
+                                    customername_,
+                                    dateController.text);
                               }
                             }
                           : null),
@@ -296,58 +303,19 @@ class _HomepageState extends State<Homepage> {
         ));
   }
 
-  salesInvoice(customerid, formattedDate, serialno_) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    for (var item in serialno_) {
-      item.remove(
-          'rate_controller'); // Remove the 'rate_controller' key from the item
-    }
-   
-    frappe.call(
-        // context: context,
-        method:
-            "azhagu_murugan_live.azhagu_murugan_live.utils.api.api.sales_invoice_creation",
-        args: {
-          'data': json.encode({
-            "user": "Barath P",
-            "customer_name": customerid,
-            "posting_date": formattedDate,
-            "serial_no": serialno_
-          })
-        },
-        callback: (response, result) async {
-          if (response!.statusCode == 200) {
-            temp();
-            response.headers['cookie'] =
-                "${response.headers['set-cookie'].toString()};";
-            response.headers.removeWhere(
-                (key, value) => ["set-cookie", 'content-length'].contains(key));
-            apiHeaders = response.headers;
-            await prefs.setString('request-header',
-                json.encode(response.headers)); // store headers for API calls
-            dateController.clear();
-            serialController.clear();
-            customercodeController.clear();
-            showCustomSnackBar(
-              result?['message'],
-              title: "Success",
-              icon: true,
-              iconColor: Colors.white,
-              backgroundColor: Colors.green.shade700,
-            );
-          } else {
-            showCustomSnackBar(
-              result?['message'],
-              title: "Failure",
-              icon: false,
-              iconColor: Colors.white,
-              backgroundColor: Colors.red.shade700,
-            );
-          }
-        });
-  }
+  salesInvoice(customerid, formattedDate, serialno_, customername_,
+      customernumber_) async {
+    serialController.clear();
+    Get.to(Orderpreview(), arguments: [
+      serialno_,
+      customerid,
+      formattedDate,
+      customername_,
+      customernumber_
+    ]);
 
-  temp() {
-    serialno_.empty();
+    temp() {
+      serialno_.empty();
+    }
   }
 }

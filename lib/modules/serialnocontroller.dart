@@ -21,8 +21,23 @@ class Serialno extends GetxController {
   late Timer timer;
 
   add(itemlist_) {
+    var itemname = '';
+    print(itemlist_);
+    print(
+        "item codeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
     List<String> items = itemlist_.split(',');
+    print("xxxxxxxxxxxxxxxxxxxxxx");
+    print(items);
     for (String item in items) {
+      print("popopopopopooppoop");
+      print(item);
+
+      if (item.contains('Item Code')) {
+        itemname = item.split(':').last.trim();
+      }
+
+      print("sssssssssssssssssss${itemname}");
+
       if (item.contains('Serial Number')) {
         String serialNumber = item.split(':').last.trim();
 
@@ -36,7 +51,12 @@ class Serialno extends GetxController {
           }
         } else {
           check_item.add(serialNumber);
-          itemList.add(<dynamic, dynamic>{"item_code": serialNumber});
+          itemList.add(
+            <dynamic, dynamic>{
+              "item_code": serialNumber,
+              "item_name": itemname
+            },
+          );
         }
         break;
       }
@@ -60,7 +80,6 @@ class Serialno extends GetxController {
           "https://sam2.thirvusoft.co.in/api/method/login?usr=$email&pwd=$pwd",
         ),
       );
-      
 
       response.headers['cookie'] =
           "${response.headers['set-cookie'].toString()};";
@@ -69,8 +88,6 @@ class Serialno extends GetxController {
       apiHeaders = response.headers;
       await prefs.setString('request-header',
           json.encode(response.headers)); // store headers for API calls
-
-      
     } catch (e) {
       print('Error fetching events: $e');
     }
@@ -79,7 +96,7 @@ class Serialno extends GetxController {
   Future customer_(number) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     frappe.call(
-        // context: context,
+        // context: context,item_code
         method:
             "azhagu_murugan_live.azhagu_murugan_live.utils.api.api.customer_list",
         args: {
@@ -88,7 +105,6 @@ class Serialno extends GetxController {
         callback: (response, result) async {
           if (response!.statusCode == 200) {
             customer.clear();
-          
 
             customer += result?["message"] ?? [];
             response.headers['cookie'] =
@@ -98,6 +114,23 @@ class Serialno extends GetxController {
             apiHeaders = response.headers;
             await prefs.setString('request-header',
                 json.encode(response.headers)); // store headers for API calls
+          }
+        });
+  }
+
+  Future serialno_(number) async {
+    await frappe.call(
+        method:
+            "azhagu_murugan_live.azhagu_murugan_live.utils.api.api.serial_no",
+        args: {
+          "number": number,
+        },
+        callback: (response, result) async {
+          if (response!.statusCode == 200) {
+            String temp =
+                "Item Code:${result?["message"][0]['item_code']},Serial Number:${result?["message"][0]['name']}";
+
+            add(temp);
           }
         });
   }
@@ -125,7 +158,6 @@ class Serialno extends GetxController {
             }
             territorylist_ += (valuesList);
 
-          
             response.headers['cookie'] =
                 "${response.headers['set-cookie'].toString()};";
             response.headers.removeWhere(

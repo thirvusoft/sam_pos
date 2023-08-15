@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:heroicons/heroicons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../modules/serialnocontroller.dart';
@@ -165,6 +164,7 @@ class _LoginPageState extends State<LoginPage> {
           method: "login",
           args: {"usr": email, "pwd": pwd},
           callback: (response, result) async {
+            print(result);
             if (response!.statusCode == 200) {
               response.headers['cookie'] =
                   "${response.headers['set-cookie'].toString()};";
